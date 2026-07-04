@@ -1,7 +1,5 @@
-# Security-Safety-Guardrails-in-the-Autonomous-Marketing-Optimizer
 # Robust Governance and Control Risk Mitigation in Multi-Agent Systems: A Guardrail Implementation for Autonomous Marketing Optimizers
 
-**Technical Work Sample / Project Report**  
 **Focus Area:** AI Safety Engineering, Agent Governance, and Human-in-the-Loop Control Systems  
 **System Evaluated:** CrewAI Multi-Agent Marketing Command Center (Strategic Certainty Engine)
 
