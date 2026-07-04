@@ -1,0 +1,9 @@
+{"timestamp": "2026-07-04T09:45:50.255629", "event": "prompt_injection_flagged", "source": "test_source", "flagged": true, "matched_patterns": ["ignore (all |previous )?instructions", "reveal (your|the) (system )?prompt"]}
+{"timestamp": "2026-07-04T09:45:50.255629", "agent": "BudgetAgent", "event": "budget_spent", "amount": 30.0, "total_spent": 30.0, "remaining_budget": 70.0}
+{"timestamp": "2026-07-04T09:45:50.257643", "agent": "BudgetAgent", "event": "budget_spent", "amount": 70.0, "total_spent": 100.0, "remaining_budget": 0.0}
+{"timestamp": "2026-07-04T09:45:50.257643", "agent": "BudgetAgent", "event": "budget_cap_exceeded", "attempted_amount": 10.0, "remaining_budget": 0.0}
+{"timestamp": "2026-07-04T09:45:50.257643", "agent": "CopyAgent", "action": "draft_campaign_copy", "params": {"text": "hello"}, "risk": "low", "status": "auto_approved"}
+{"timestamp": "2026-07-04T09:45:50.259658", "agent": "BudgetAgent", "action": "reallocate_budget", "params": {"amount": 200.0}, "risk": "high", "id": "9a3ab5ba", "status": "pending_human_approval"}
+{"timestamp": "2026-07-04T09:45:50.259658", "agent": "BudgetAgent", "event": "budget_spent", "amount": 200.0, "total_spent": 200.0, "remaining_budget": 300.0}
+{"timestamp": "2026-07-04T09:45:50.259658", "id": "9a3ab5ba", "agent": "BudgetAgent", "action": "reallocate_budget", "params": {"amount": 200.0}, "status": "executed", "approver": "human"}
+{"timestamp": "2026-07-04T09:45:50.261672", "agent": "BudgetAgent", "action": "reallocate_budget", "params": {"amount": 400.0}, "status": "denied", "reason": "Action budget cap exceeded. Limit: $500.00, Spent: $200.00, Requested: $400.00"}

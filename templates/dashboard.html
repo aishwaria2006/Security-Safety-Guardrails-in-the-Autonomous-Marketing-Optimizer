@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI CRM Agent - Lead Intelligence Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        .hot-lead { animation: pulse-glow 2s infinite; }
+        .gradient-bg { background: linear-gradient(135deg, #1b1e2c 0%, hsl(270, 73%, 12%) 100%); }
+        .card-hover:hover { transform: translateY(-4px); transition: all 0.3s; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                        <span class="text-2xl">🤖</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">AI CRM Agent</h1>
+                        <p class="text-sm text-blue-200">Lead Intelligence Dashboard</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm text-blue-200">Last Updated</p>
+                        <p class="font-semibold" id="lastUpdate">Loading...</p>
+                    </div>  <button class="header-btn" onclick="window.location.href='https://public.tableau.com/app/profile/abi.krishnnan.r.m/viz/infynd/B2BIndustryPerformanceEngagementDashboard;'">
+Tableu Public
+  </button>
+                    <button onclick="refreshData()" class="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-semibold">Total Leads</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-2" id="totalLeads">-</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-2xl">📊</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-600 font-semibold">↑ 12%</span>
+                    <span class="text-gray-500 ml-2">from last month</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover hot-lead">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-semibold">Hot Leads</p>
+                        <p class="text-3xl font-bold text-red-600 mt-2" id="hotLeads">-</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <span class="text-2xl">🔥</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-red-600 font-semibold">URGENT</span>
+                    <span class="text-gray-500 ml-2">Immediate action</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-semibold">Avg Score</p>
+                        <p class="text-3xl font-bold text-purple-600 mt-2" id="avgScore">-</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <span class="text-2xl">⭐</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-purple-600 font-semibold">AI-Powered</span>
+                    <span class="text-gray-500 ml-2">ML scoring</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-semibold">Conv. Rate</p>
+                        <p class="text-3xl font-bold text-green-600 mt-2" id="convRate">-</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <span class="text-2xl">💰</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-600 font-semibold">↑ 8%</span>
+                    <span class="text-gray-500 ml-2">improvement</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Charts Column -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Score Distribution Chart -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Lead Score Distribution</h2>
+                    <canvas id="scoreDistChart" height="80"></canvas>
+                </div>
+
+                <!-- Regional Performance -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Regional Performance</h2>
+                    <canvas id="regionalChart" height="80"></canvas>
+                </div>
+
+                <!-- Industry Analysis -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Top Industries by Score</h2>
+                    <canvas id="industryChart" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Leads Column -->
+            <div class="space-y-8">
+                <!-- Search -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Search Leads</h2>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search by email or ID..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        onkeyup="searchLeads()"
+                    >
+                    <div id="searchResults" class="mt-4 space-y-2 max-h-64 overflow-y-auto"></div>
+                </div>
+
+                <!-- Top Leads -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">🏆 Top 10 Leads</h2>
+                    <div id="topLeadsList" class="space-y-3 max-h-96 overflow-y-auto">
+                        <div class="text-center text-gray-500 py-4">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Model Info -->
+                <div class="bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+                    <h2 class="text-xl font-bold mb-4">🤖 AI Model Info</h2>
+                    <div id="modelInfo" class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-purple-200">Model Type:</span>
+                            <span class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-purple-200">ROC-AUC:</span>
+                            <span class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-purple-200">Training Time:</span>
+                            <span class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-purple-200">Samples:</span>
+                            <span class="font-semibold">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Leads Table -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mt-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-800">All Leads</h2>
+                <div class="flex space-x-2">
+                    <select id="sortSelect" onchange="loadLeads()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                        <option value="Lead_Score">Sort by Score</option>
+                        <option value="Days_Since_Last_Activity">Sort by Activity</option>
+                        <option value="Engagement_Score">Sort by Engagement</option>
+                    </select>
+                    <button onclick="exportData()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                        📥 Export
+                    </button>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Lead ID</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Email</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Score</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Priority</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Industry</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Company Size</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Last Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTable">
+                        <tr>
+                            <td colspan="7" class="px-4 py-8 text-center text-gray-500">Loading leads...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex items-center justify-between mt-6">
+                <div class="text-sm text-gray-600">
+                    Showing <span id="showingStart">0</span> to <span id="showingEnd">0</span> of <span id="totalCount">0</span> leads
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="previousPage()" id="prevBtn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition disabled:opacity-50">
+                        Previous
+                    </button>
+                    <span id="pageInfo" class="px-4 py-2 font-semibold">Page 1</span>
+                    <button onclick="nextPage()" id="nextBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-50">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentPage = 1;
+        let totalLeads = 0;
+        let charts = {};
+        let searchTimeout = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            loadTopLeads();
+            loadLeads();
+            loadCharts();
+            loadModelInfo();
+            updateLastUpdate();
+            
+            // Auto-refresh every 5 minutes
+            setInterval(refreshData, 300000);
+        });
+
+        // Update last update time
+        function updateLastUpdate() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleTimeString();
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                document.getElementById('totalLeads').textContent = data.total_leads.toLocaleString();
+                document.getElementById('hotLeads').textContent = data.hot_leads.toLocaleString();
+                document.getElementById('avgScore').textContent = data.avg_score.toFixed(1);
+                document.getElementById('convRate').textContent = data.conversion_rate.toFixed(1) + '%';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load top leads
+        async function loadTopLeads() {
+            try {
+                const response = await fetch('/api/top-leads?limit=10');
+                const data = await response.json();
+                
+                const container = document.getElementById('topLeadsList');
+                container.innerHTML = '';
+                
+                data.top_leads.forEach((lead, index) => {
+                    const priorityColor = {
+                        'HOT': 'bg-red-100 text-red-700 border-red-300',
+                        'WARM': 'bg-orange-100 text-orange-700 border-orange-300',
+                        'COOL': 'bg-blue-100 text-blue-700 border-blue-300',
+                        'COLD': 'bg-gray-100 text-gray-700 border-gray-300'
+                    }[lead.Priority];
+                    
+                    const isHot = lead.Priority === 'HOT';
+                    
+                    container.innerHTML += `
+                        <div class="border-2 ${priorityColor} rounded-lg p-3 hover:shadow-md transition ${isHot ? 'hot-lead' : ''}">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold text-lg">#${index + 1}</span>
+                                <span class="text-2xl font-bold">${lead.Lead_Score}</span>
+                            </div>
+                            <div class="text-sm">
+                                <div class="font-semibold truncate">${lead.Email}</div>
+                                <div class="text-xs text-gray-600 mt-1">${lead.Industry} • ${lead.Company_Size}</div>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-xs font-semibold px-2 py-1 rounded ${priorityColor}">
+                                        ${lead.Priority}
+                                    </span>
+                                    <span class="text-xs text-gray-500">Engagement: ${lead.Engagement_Score}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading top leads:', error);
+            }
+        }
+
+        // Load leads table
+        async function loadLeads() {
+            try {
+                const sortBy = document.getElementById('sortSelect').value;
+                const response = await fetch(`/api/leads?page=${currentPage}&per_page=20&sort=${sortBy}`);
+                const data = await response.json();
+                
+                totalLeads = data.total;
+                const tbody = document.getElementById('leadsTable');
+                tbody.innerHTML = '';
+                
+                data.leads.forEach(lead => {
+                    const priorityColors = {
+                        'HOT': 'bg-red-100 text-red-700',
+                        'WARM': 'bg-orange-100 text-orange-700',
+                        'COOL': 'bg-blue-100 text-blue-700',
+                        'COLD': 'bg-gray-100 text-gray-700'
+                    };
+                    
+                    tbody.innerHTML += `
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 text-sm font-mono">${lead.Lead_ID}</td>
+                            <td class="px-4 py-3 text-sm">${lead.Email}</td>
+                            <td class="px-4 py-3">
+                                <span class="text-lg font-bold text-purple-600">${lead.Lead_Score}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[lead.Priority]}">
+                                    ${lead.Priority}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-sm">${lead.Industry}</td>
+                            <td class="px-4 py-3 text-sm">${lead.Company_Size}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">${lead.Days_Since_Last_Activity}d ago</td>
+                        </tr>
+                    `;
+                });
+                
+                // Update pagination
+                const start = (currentPage - 1) * 20 + 1;
+                const end = Math.min(currentPage * 20, totalLeads);
+                document.getElementById('showingStart').textContent = start;
+                document.getElementById('showingEnd').textContent = end;
+                document.getElementById('totalCount').textContent = totalLeads;
+                document.getElementById('pageInfo').textContent = `Page ${currentPage}`;
+                
+                // Update buttons
+                document.getElementById('prevBtn').disabled = currentPage === 1;
+                document.getElementById('nextBtn').disabled = end >= totalLeads;
+            } catch (error) {
+                console.error('Error loading leads:', error);
+            }
+        }
+
+        // Load charts
+        async function loadCharts() {
+            await loadScoreDistribution();
+            await loadRegionalAnalysis();
+            await loadIndustryAnalysis();
+        }
+
+        // Score distribution chart
+        async function loadScoreDistribution() {
+            try {
+                const response = await fetch('/api/score-distribution');
+                const data = await response.json();
+                
+                const ctx = document.getElementById('scoreDistChart').getContext('2d');
+                
+                if (charts.scoreDist) charts.scoreDist.destroy();
+                
+                charts.scoreDist = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.ranges,
+                        datasets: [{
+                            label: 'Number of Leads',
+                            data: data.counts,
+                            backgroundColor: [
+                                'rgba(156, 163, 175, 0.7)',
+                                'rgba(59, 130, 246, 0.7)',
+                                'rgba(251, 146, 60, 0.7)',
+                                'rgba(239, 68, 68, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgb(156, 163, 175)',
+                                'rgb(59, 130, 246)',
+                                'rgb(251, 146, 60)',
+                                'rgb(239, 68, 68)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false },
+                            title: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading score distribution:', error);
+            }
+        }
+
+        // Regional analysis chart
+        async function loadRegionalAnalysis() {
+            try {
+                const response = await fetch('/api/regional-analysis');
+                const data = await response.json();
+                
+                const ctx = document.getElementById('regionalChart').getContext('2d');
+                
+                if (charts.regional) charts.regional.destroy();
+                
+                charts.regional = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(d => d.region),
+                        datasets: [{
+                            label: 'Avg Score',
+                            data: data.map(d => d.avg_score),
+                            backgroundColor: 'rgba(147, 51, 234, 0.7)',
+                            borderColor: 'rgb(147, 51, 234)',
+                            borderWidth: 2
+                        }, {
+                            label: 'Lead Count',
+                            data: data.map(d => d.lead_count),
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                position: 'left',
+                                title: { display: true, text: 'Average Score' }
+                            },
+                            y1: {
+                                beginAtZero: true,
+                                position: 'right',
+                                grid: { drawOnChartArea: false },
+                                title: { display: true, text: 'Lead Count' }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading regional analysis:', error);
+            }
+        }
+
+        // Industry analysis chart
+        async function loadIndustryAnalysis() {
+            try {
+                const response = await fetch('/api/industry-analysis');
+                const data = await response.json();
+                
+                const top10 = data.slice(0, 10);
+                
+                const ctx = document.getElementById('industryChart').getContext('2d');
+                
+                if (charts.industry) charts.industry.destroy();
+                
+                charts.industry = new Chart(ctx, {
+                    type: 'horizontalBar',
+                    data: {
+                        labels: top10.map(d => d.industry),
+                        datasets: [{
+                            label: 'Average Score',
+                            data: top10.map(d => d.avg_score),
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: 'rgb(16, 185, 129)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading industry analysis:', error);
+            }
+        }
+
+        // Load model info
+        async function loadModelInfo() {
+            try {
+                const response = await fetch('/api/model-info');
+                const data = await response.json();
+                
+                document.getElementById('modelInfo').innerHTML = `
+                    <div class="flex justify-between">
+                        <span class="text-purple-200">Model Type:</span>
+                        <span class="font-semibold">${data.model_type || 'N/A'}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-purple-200">ROC-AUC:</span>
+                        <span class="font-semibold">${data.roc_auc ? data.roc_auc.toFixed(4) : 'N/A'}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-purple-200">Training Time:</span>
+                        <span class="font-semibold">${data.training_time ? data.training_time.toFixed(2) + 's' : 'N/A'}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-purple-200">Samples:</span>
+                        <span class="font-semibold">${data.train_samples || 0} train / ${data.test_samples || 0} test</span>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading model info:', error);
+            }
+        }
+
+        // Search leads
+        function searchLeads() {
+            clearTimeout(searchTimeout);
+            
+            searchTimeout = setTimeout(async () => {
+                const query = document.getElementById('searchInput').value;
+                
+                if (query.length < 2) {
+                    document.getElementById('searchResults').innerHTML = '';
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`/api/search-leads?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    
+                    const container = document.getElementById('searchResults');
+                    
+                    if (data.results.length === 0) {
+                        container.innerHTML = '<div class="text-sm text-gray-500 text-center py-2">No results found</div>';
+                        return;
+                    }
+                    
+                    container.innerHTML = '';
+                    data.results.forEach(lead => {
+                        const priorityColors = {
+                            'HOT': 'bg-red-100 text-red-700',
+                            'WARM': 'bg-orange-100 text-orange-700',
+                            'COOL': 'bg-blue-100 text-blue-700',
+                            'COLD': 'bg-gray-100 text-gray-700'
+                        };
+                        
+                        container.innerHTML += `
+                            <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-semibold truncate">${lead.Email}</div>
+                                        <div class="text-xs text-gray-500">${lead.Industry}</div>
+                                    </div>
+                                    <div class="ml-3 flex items-center space-x-2">
+                                        <span class="text-lg font-bold text-purple-600">${lead.Lead_Score}</span>
+                                        <span class="px-2 py-1 rounded text-xs font-semibold ${priorityColors[lead.Priority]}">
+                                            ${lead.Priority}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } catch (error) {
+                    console.error('Error searching leads:', error);
+                }
+            }, 300);
+        }
+
+        // Pagination
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadLeads();
+            }
+        }
+
+        function nextPage() {
+            const maxPage = Math.ceil(totalLeads / 20);
+            if (currentPage < maxPage) {
+                currentPage++;
+                loadLeads();
+            }
+        }
+
+        // Refresh all data
+        function refreshData() {
+            loadStats();
+            loadTopLeads();
+            loadLeads();
+            loadCharts();
+            loadModelInfo();
+            updateLastUpdate();
+        }
+
+        // Export data
+        function exportData() {
+            window.open('/api/download-report', '_blank');
+        }
+    </script>
+</body>
+</html>

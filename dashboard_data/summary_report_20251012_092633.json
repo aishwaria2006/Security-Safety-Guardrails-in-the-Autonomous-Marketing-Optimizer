@@ -1,0 +1,43 @@
+{
+  "report_generated": "2025-10-12T09:26:33.294538",
+  "total_leads": 5000,
+  "score_statistics": {
+    "mean": 34.8952,
+    "median": 27.0,
+    "std": 25.777282840170034,
+    "min": 0,
+    "max": 94
+  },
+  "priority_distribution": {
+    "COLD": 2766,
+    "COOL": 1065,
+    "HOT": 683,
+    "WARM": 486
+  },
+  "predicted_conversions": 1169,
+  "conversion_rate": 0.2338,
+  "top_industries": {
+    "Technology": 36.547474747474745,
+    "E-commerce": 35.96007984031936,
+    "Retail": 35.93088552915767,
+    "Real Estate": 35.18683651804671,
+    "Consulting": 35.08285163776493
+  },
+  "top_sources": {
+    "Webinar": 48.55233853006681,
+    "Referral": 46.88208616780045,
+    "Partner": 46.771300448430495,
+    "LinkedIn": 38.777292576419214,
+    "Content Download": 36.78815489749431
+  },
+  "engagement_stats": {
+    "high": 594,
+    "medium": 154,
+    "low": 4252
+  },
+  "recent_activity": {
+    "active_last_7_days": 2590,
+    "active_last_30_days": 4623,
+    "dormant": 377
+  }
+}
